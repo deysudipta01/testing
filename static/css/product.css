@@ -1,0 +1,288 @@
+/* Global Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container for Grid and Buttons */
+.container {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* Button Styles */
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #45a049;
+}
+
+/* Grid Layout for Products */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    list-style-type: none;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+/* Product Card Styling */
+.grid-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.grid-item:hover {
+    transform: scale(1.05);
+}
+
+/* Image Styling */
+.grid-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Overlay for Product Names */
+.overlay {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay span {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    max-width: 500px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    z-index: 1000;
+    transform: translate(-50%, -50%);
+}
+
+/* Hide modal initially */
+.modal[style*="display: none"] {
+    display: none;
+}
+
+/* Close Button */
+.modal button {
+    background-color: #f44336;
+    margin-top: 10px;
+}
+
+/* Responsive Grid */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+/* Logout Button Styling */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Danger Button (Logout) */
+.btn-danger {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+/* Hover Effect */
+.btn-danger:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
+}
+
+/* Button Focus */
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+}
+
+
+/* ============================= */
+/* ✅ Modal Styling for Cart and Orders */
+/* ============================= */
+#cart-modal,
+#orders-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    max-height: 80%;
+    overflow-y: auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollbar Customization for Modals */
+#cart-modal::-webkit-scrollbar,
+#orders-modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+#cart-modal::-webkit-scrollbar-thumb,
+#orders-modal::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+}
+
+#cart-modal::-webkit-scrollbar-thumb:hover,
+#orders-modal::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* ============================= */
+/* ✅ Cart List and Items */
+/* ============================= */
+#cart-list,
+#orders-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+/* Flex container for each cart item */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+
+}
+
+
+
+/* Product Image in Cart */
+.cart-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 5px;
+}
+
+/* Product Details in Cart */
+.cart-item-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+}
+
+/* Buttons aligned vertically in cart */
+.cart-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    gap: 5px;
+    margin-left: auto;  /* Push buttons to the right */
+    align-items: flex-end; /* Align buttons to the right */
+}
+
+/* Button Styling */
+.cart-buttons button,
+#orders-modal button {
+    margin-top: 5px;
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+
+.cart-buttons button:hover,
+#orders-modal button:hover {
+    background-color: #45a049;
+}
+
+/* ============================= */
+/* ✅ Orders Modal Specific */
+/* ============================= */
+#orders-modal {
+    max-height: 400px; /* Restrict orders modal height */
+    overflow-y: auto;
+}
+
+#orders-list {
+    max-height: 300px; /* Set scrollable height for orders */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+/* ============================= */
+/* ✅ Logout Button Styling */
+/* ============================= */
+a.btn.btn-danger {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+a.btn.btn-danger:hover {
+    background-color: #c82333;
+}

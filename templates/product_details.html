@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product['name'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/product_details.css') }}">
+</head>
+<body>
+
+<!-- Product Page Content -->
+<div class="page-content page-content--product appco_bg">
+    <div class="back-to-products">
+    <a href="/products" class="btn-back">← Back to Products</a>
+    </div>
+    <div class="page-width appco_bg">
+        <div class="grid grid--product-images--partial appco_bg">
+            <!-- Product Image Slider -->
+            <div class="grid__item medium-up--three-fifths product-single__sticky appco_bg">
+                <div class="product__photos product__photos-template appco_bg">
+                    <div class="product__main-photos appco_bg" id="ProductPhotos">
+
+                       <img src="{{ url_for('static', filename=product['image'][7:]) if product['image'] else url_for('static', filename='images/default.png') }}" alt="{{ product['name'] }}" class="product-image">
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info Section -->
+            <div class="grid__item medium-up--two-fifths product-single__info appco_bg">
+                <h1 class="product-title">{{ product['name'] }}</h1>
+                <p class="product-price">${{ product['price'] }}</p>
+                <div class="product-reviews">
+                    <span class="stamped-badge-caption">{{ product['rating'] }}/5 based on {{ product['reviews_count'] }} reviews</span>
+                </div>
+
+                <div class="product-details appco_bg">
+                    <h2>Product Description</h2>
+                    <p>{{ product['description'] if product['description'] else 'No description available.' }}</p>
+
+                    <h2>Care Instructions</h2>
+                    <p>{{ product['care_instructions'] if product['care_instructions'] else 'No care instructions provided.' }}</p>
+                </div>
+                <!-- Add to Cart Button -->
+                <!-- Add to Cart Button -->
+                <div class="product-actions">
+                    <button class="add-to-cart btn--secondary" onclick="addToCart('{{ product['_id'] }}')">
+                        Add to Cart
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Product List Section -->
+        <div class="related-products">
+            <h2>Other Products You May Like</h2>
+            <ul id="product-list" class="grid-container">
+                {% for product in products %}
+                <li class="grid-item">
+                    <div class="product-card">
+                        <a href="{{ url_for('product_details', product_id=product['_id']) }}" title="{{ product['name'] }}">
+                            <img src="{{ url_for('static', filename=product['image'][7:]) }}" alt="{{ product['name'] }}">
+                            <div class="overlay">
+                                <span>{{ product['name'] }}</span>
+                            </div>
+                        </a>
+                        <p>Price: ${{ product['price'] }}</p>
+                        <button onclick="addToCart('{{ product['_id'] }}')">Add to Cart</button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+</div>
+
+<!-- Include Footer Here -->
+    <footer class="site-footer" data-section-id="custom-footer" data-section-type="footer-section">
+      <div class="page-width appco_bg">
+        <div class="grid appco_bg">
+
+          <!-- Shop By Category Section -->
+          <div class="grid__item footer__item--custom-footer-0 appco_bg" data-type="menu">
+            <p class="h4 footer__title">Shop By Category</p>
+            <ul class="no-bullets site-footer__linklist">
+              <li><a href="/collections/cactus">Cacti</a></li>
+              <li><a href="/collections/succulents">Succulents</a></li>
+              <li><a href="https://planetdesert.com/collections/best-selling-collection">Most Popular Plants</a></li>
+              <li><a href="/collections/cactus-and-succulent-gift-sets">Living Gifts</a></li>
+              <li><a href="/collections/supplies">Supplies</a></li>
+              <li><a href="/collections/rare-succulents-and-cactus">Rare Succulents & Cacti</a></li>
+            </ul>
+          </div>
+
+          <!-- Company Section -->
+          <div class="grid__item footer__item--company appco_bg" data-type="menu">
+            <p class="h4 footer__title">Company</p>
+            <ul class="no-bullets site-footer__linklist">
+              <li><a href="/pages/about-us">About Us</a></li>
+              <li><a href="/pages/become-a-partner">Become a Partner</a></li>
+              <li><a href="/collections">Catalog</a></li>
+              <li><a href="/pages/contact-we-are-here-to-help">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <!-- Help Section -->
+          <div class="grid__item footer__item--help appco_bg" data-type="menu">
+            <p class="h4 footer__title">Help</p>
+            <ul class="no-bullets site-footer__linklist">
+              <li><a href="/pages/terms-and-conditions">Terms and Conditions</a></li>
+              <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <!-- Newsletter Section -->
+          <div class="grid__item footer__item--newsletter appco_bg" data-type="newsletter">
+            <p class="h4 footer__title">Sign up and save</p>
+            <form method="post" action="/subscribe" id="newsletter-footer">
+              <input type="email" placeholder="Enter your email" name="email" class="footer__newsletter-input">
+              <button type="submit" class="footer__newsletter-btn">Subscribe</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+
+
+
+
+<!-- JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script >
+
+
+    // Accordion functionality
+document.addEventListener("DOMContentLoaded", function () {
+    const accordionBtns = document.querySelectorAll(".accordion");
+
+    accordionBtns.forEach((accordion) => {
+        accordion.onclick = function () {
+            this.classList.toggle("is-open");
+            let content = this.nextElementSibling;
+
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        };
+    });
+});
+
+// Add to cart functionality with AJAX request
+function addToCart(productId) {
+    // Send AJAX request to Flask backend
+    fetch("/add_to_cart", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId: productId }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        if (data.success) {
+            alert("✅ " + data.message); // Success message from Flask
+        } else {
+            alert("❌ Error: " + data.message); // Error message if something goes wrong
+        }
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+        alert("❌ An error occurred while adding the product to the cart.");
+    });
+}
+
+</script>
+
+
+</body>
+</html>

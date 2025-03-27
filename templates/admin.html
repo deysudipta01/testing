@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+
+
+</head>
+<body>
+
+    <h1>Admin Dashboard</h1>
+    <a href="{{ url_for('logout2') }}" class="btn btn-danger">Logout</a>
+    <!-- View Orders Button -->
+    <button onclick="toggleOrders()" class="order-btn" id="order-btn">View Orders</button>
+
+    <!-- Order Container -->
+    <div id="order-container" class="order-grid"></div>
+
+    <!-- Old Orders Section -->
+<h2>Old Orders</h2>
+<button onclick="toggleOldOrders()" id="old-order-btn" class="btn-secondary">Hide Old Orders</button>
+<div id="old-order-container" class="order-grid"></div>
+
+    <!-- Add/Update Product Form -->
+    <form id="product-form" enctype="multipart/form-data">
+        <input type="hidden" id="product-id">
+        <input type="text" id="name" placeholder="Product Name" required>
+        <input type="number" id="price" placeholder="Price" required>
+        <textarea id="description" placeholder="Description" required></textarea>
+        <input type="file" id="image" accept="image/*">
+        <button type="submit" id="submit-btn">Add Product</button>
+    </form>
+
+    <h2>Product List</h2>
+    <div id="product-container" class="product-grid"></div>
+
+<script>
+
+
+// Toggle Old Orders Visibility
+function toggleOldOrders() {
+    const oldOrderContainer = document.getElementById('old-order-container');
+    const btn = document.getElementById('old-order-btn');
+
+    if (oldOrderContainer.style.display === 'none' || oldOrderContainer.innerHTML === '') {
+        oldOrderContainer.style.display = 'grid';
+        btn.textContent = 'Hide Old Orders';
+    } else {
+        oldOrderContainer.style.display = 'none';
+        btn.textContent = 'Show Old Orders';
+    }
+}
+
+
+
+// Toggle newOrder Visibility
+function toggleOrders() {
+    const container = document.getElementById('order-container');
+    const btn = document.getElementById('order-btn');
+
+    if (container.style.display === 'none' || container.innerHTML === '') {
+        loadOrders(); // Load orders when button is clicked
+        container.style.display = 'grid';
+        btn.textContent = 'Hide Orders';
+    } else {
+        container.style.display = 'none';
+        btn.textContent = 'View Orders';
+    }
+}
+
+// Fetch and display all listed products
+async function loadProducts() {
+    const response = await fetch('/api/products');
+    const products = await response.json();
+    const container = document.getElementById('product-container');
+    container.innerHTML = '';
+
+    if (products.length === 0) {
+        container.innerHTML = '<p>No products listed yet.</p>';
+    } else {
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="/${product.image}" alt="Product Image" width="100">
+                <div class="product-info"><strong>${product.name}</strong></div>
+                <p>Price: ₹${product.price}</p>
+                <p>Description: ${product.description}</p>
+                <button onclick="editProduct('${product._id}', '${product.name}', '${product.price}', '${product.description}', '${product.image}')">Edit</button>
+                <button onclick="deleteProduct('${product._id}')">Delete</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+}
+
+
+// Fetch and display orders, moving completed orders to old orders
+async function loadOrders() {
+    const response = await fetch('/api/orders');
+    const orders = await response.json();
+    const container = document.getElementById('order-container');
+    const oldOrderContainer = document.getElementById('old-order-container');
+
+    container.innerHTML = '';
+    oldOrderContainer.innerHTML = '';
+
+    if (orders.length === 0) {
+        container.innerHTML = '<p>No orders found.</p>';
+    } else {
+        orders.forEach(order => {
+            const orderCard = document.createElement('div');
+            orderCard.className = 'order-card';
+            orderCard.innerHTML = `
+                <h3>Order ID: ${order._id}</h3>
+                <p><strong>Name:</strong> ${order.name}</p>
+                <p><strong>Phone:</strong> ${order.phno}</p>
+                <p><strong>Address:</strong> ${order.address}</p>
+                <p><strong>Payment Method:</strong> ${order.payment_method.toUpperCase()}</p>
+                <p><strong>Total Price:</strong> ₹${order.total_price}</p>
+                <p><strong>Status:</strong> ${order.status}</p>
+                <strong>Order Date:</strong> ${formatDate(order.order_date)}<br>
+                <h4>Items:</h4>
+                <ul>
+                    ${order.items.map(item => `
+                        <li>${item.name} - ₹${item.price} x ${item.quantity}</li>
+                    `).join('')}
+                </ul>
+                ${order.status === 'Completed' ? '' : `
+                <button onclick="updateOrderStatus('${order._id}', 'Completed')">Mark as Completed</button>
+                <button onclick="deleteOrder('${order._id}')">Delete Order</button>
+                `}
+            `;
+
+            // Move completed orders to Old Orders section
+            if (order.status === 'Completed') {
+                oldOrderContainer.appendChild(orderCard);
+            } else {
+                container.appendChild(orderCard);
+            }
+        });
+    }
+}
+
+
+// Update order status
+// Update order status and move completed orders to old orders
+async function updateOrderStatus(orderId, status) {
+    const response = await fetch(`/api/update_order/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    });
+
+    if (response.ok) {
+        alert('Order status updated successfully!');
+
+        // Load orders again after updating
+        loadOrders();
+    } else {
+        alert('Error updating order status!');
+    }
+}
+
+
+// Delete order
+async function deleteOrder(orderId) {
+    const response = await fetch(`/api/delete_order/${orderId}`, {
+        method: 'DELETE'
+    });
+
+    if (response.ok) {
+        alert('Order deleted successfully!');
+        loadOrders();
+    } else {
+        alert('Error deleting order!');
+    }
+}
+
+// Add or Update a product
+document.getElementById('product-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const productId = document.getElementById('product-id').value;
+    const formData = new FormData();
+    formData.append('name', document.getElementById('name').value);
+    formData.append('price', document.getElementById('price').value);
+    formData.append('description', document.getElementById('description').value);
+
+    const imageFile = document.getElementById('image').files[0];
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
+
+    const url = productId ? `/api/update_product/${productId}` : '/api/add_product';
+    const method = productId ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+        method: method,
+        body: formData
+    });
+
+    if (response.ok) {
+        alert(productId ? 'Product updated successfully!' : 'Product added successfully!');
+        loadProducts();
+        resetForm();
+    } else {
+        alert('Error processing product!');
+    }
+});
+
+// Load product data for editing
+function editProduct(id, name, price, description, image) {
+    document.getElementById('product-id').value = id;
+    document.getElementById('name').value = name;
+    document.getElementById('price').value = price;
+    document.getElementById('description').value = description;
+    document.getElementById('submit-btn').textContent = 'Update Product';
+}
+
+// Delete product
+async function deleteProduct(productId) {
+    const response = await fetch(`/api/delete_product/${productId}`, {
+        method: 'DELETE'
+    });
+
+    if (response.ok) {
+        alert('Product deleted successfully!');
+        loadProducts();
+    } else {
+        alert('Error deleting product!');
+    }
+}
+
+// Reset the form after submission
+function resetForm() {
+    document.getElementById('product-id').value = '';
+    document.getElementById('product-form').reset();
+    document.getElementById('submit-btn').textContent = 'Add Product';
+}
+
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+
+    // Check if it's in BSON format
+    if (typeof dateString === 'object' && dateString.$date) {
+        dateString = dateString.$date;  // Extract the ISO date string
+    }
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+        return 'Invalid Date';  // Return Invalid Date if parsing fails
+    }
+
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
+// Load products on page load
+window.onload = loadProducts;
+</script>
+
+</body>
+</html>

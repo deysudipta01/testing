@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/confirmation.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Order Confirmation</h2>
+        <p>To confirm your order, please enter the 4-digit code shown below:</p>
+
+        <p><strong>Confirmation Code: {{ confirmation_code }}</strong></p>
+
+        <form action="{{ url_for('verify_cod') }}" method="POST">
+            <label for="entered_code">Enter the Code:</label>
+            <input type="text" id="entered_code" name="entered_code" required><br>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

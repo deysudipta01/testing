@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Success</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+</head>
+<body>
+    <div class="container">
+        <h2>Order Successfully Placed!</h2>
+        <p>Your order has been placed successfully. Here are the details:</p>
+
+        <p><strong>Name:</strong> {{ order_data['name'] }}</p>
+        <p><strong>Delhivery_Ph:</strong> {{ order_data['phno'] }}</p>
+        <p><strong>Phone:</strong> {{ order_data['phone'] }}</p>
+        <p><strong>Address:</strong> {{ order_data['address'] }}</p>
+        <p><strong>Payment Method:</strong> {{ order_data['payment_method'] }}</p>
+        <p><strong>Total Price:</strong> ${{ order_data['total_price'] }}</p>
+
+        <h3>Order Items:</h3>
+        <ul>
+            {% for item in order_data['items'] %}
+                <li>{{ item['name'] }} - Quantity: {{ item['quantity'] }} - Price: ${{ item['price'] }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <a href="{{ url_for('products_page') }}">
+    <button type="button">Return to Products</button>
+    </a>
+
+
+
+        <script>
+        // Prevent going back to the confirmation page after placing the order
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.location.href = "{{ url_for('products_page') }}";
+        };
+        </script>
+
+
+</body>
+</html>

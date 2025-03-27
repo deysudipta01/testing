@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <title>Checkout</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Cart</h2>
+        <div id="cart-summary">
+            {% for item in cart %}
+                <p>Product: {{ item.name }} | Quantity: {{ item.quantity }} | Total Price: ${{ (item.price * item.quantity)|round(2) }}</p>
+            {% endfor %}
+            <p><strong>Total Price: ${{ total_price|round(2) }}</strong></p>
+        </div>
+
+        <!-- Proceed button -->
+        <button onclick="proceedToPayment()">Proceed</button>
+    </div>
+
+    <script>
+        // Function to handle the Proceed button click
+        function proceedToPayment() {
+            window.location.href = '/shipping';  // Redirect to a payment page
+        }
+    </script>
+</body>
+</html>
