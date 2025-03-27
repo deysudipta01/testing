@@ -87,7 +87,14 @@ async function loadProducts() {
                 <div class="product-info"><strong>${product.name}</strong></div>
                 <p>Price: ₹${product.price}</p>
                 <p>Description: ${product.description}</p>
-                <button onclick="editProduct('${product._id}', '${product.name}', '${product.price}', '${product.description}', '${product.image}')">Edit</button>
+                <button onclick="editProduct(
+                    '${product._id}',
+                    '${encodeURIComponent(product.name)}',
+                    '${product.price}',
+                    '${encodeURIComponent(product.description)}',
+                    '${encodeURIComponent(product.image)}'
+                )">Edit</button>
+
                 <button onclick="deleteProduct('${product._id}')">Delete</button>
             `;
             container.appendChild(card);
@@ -114,8 +121,11 @@ async function loadOrders() {
             orderCard.className = 'order-card';
             orderCard.innerHTML = `
                 <h3>Order ID: ${order._id}</h3>
-                <p><strong>Name:</strong> ${order.name}</p>
-                <p><strong>Phone:</strong> ${order.phno}</p>
+                <p><strong>User Name:</strong> ${order.user_name}</p>
+                <p><strong>User Phone:</strong> ${order.user_phone}</p>
+
+                <p><strong>Delhivery_Name:</strong> ${order.name}</p>
+                <p><strong>Delhivery_Phone:</strong> ${order.phno}</p>
                 <p><strong>Address:</strong> ${order.address}</p>
                 <p><strong>Payment Method:</strong> ${order.payment_method.toUpperCase()}</p>
                 <p><strong>Total Price:</strong> ₹${order.total_price}</p>
@@ -210,14 +220,19 @@ document.getElementById('product-form').addEventListener('submit', async (e) => 
     }
 });
 
-// Load product data for editing
+//edit product
 function editProduct(id, name, price, description, image) {
+    console.log('Edit button clicked!'); // Check if the button is being clicked
+    console.log(`ID: ${id}, Name: ${name}, Price: ${price}, Description: ${description}, Image: ${image}`);
+
     document.getElementById('product-id').value = id;
-    document.getElementById('name').value = name;
-    document.getElementById('price').value = price;
-    document.getElementById('description').value = description;
+    document.getElementById('name').value = decodeURIComponent(name);
+    document.getElementById('price').value = parseFloat(price);
+    document.getElementById('description').value = decodeURIComponent(description);
     document.getElementById('submit-btn').textContent = 'Update Product';
 }
+
+
 
 // Delete product
 async function deleteProduct(productId) {
