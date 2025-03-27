@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+<html lang="en" >
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shipping Details</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipping.css') }}">
     <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
-    <title>Shipping Details</title>
+
 </head>
 <body>
     <div class="iphone">
@@ -30,12 +32,12 @@
                 <div class="email">
                   <label for="phone">Name</label>
                   <div class="sec-2">
-                    <input type="text" id="name" name="name" placeholder="Enter your name"/>
+                    <input type="tel" id="name" name="name" placeholder="Enter your name" required/>
                   </div>
 
                   <label for="phone">Delhivery phone</label>
                     <div class="sec-2">
-                      <input type="text" id="phno" name="phno" placeholder="10 digit no"/>
+                      <input type="tel" id="phno" name="phno" placeholder="10 digit no" required/>
                     </div>
 
               </div>
@@ -47,7 +49,7 @@
                 <div class="password">
                   <label for="phone">Address</label>
                   <div class="sec-2">
-                    <input type="text" id="address" name="address" placeholder="Enter your Address"/>
+                    <input type="text" id="address" name="address" placeholder="Enter your Address" required/>
                   </div>
                 </div>
 
