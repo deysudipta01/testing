@@ -26,7 +26,7 @@ users = mongo.db.users
 products = mongo.db.products
 admin = mongo.db.admin
 
-app.secret_key = 'your_secret_key'
+app.secret_key = '56f8c7e3b9e4a8d5f12a6c89db307a4f7b3c91c6745d2198'
 app.config['SESSION_COOKIE_SECURE'] = True  # Use HTTPS for session cookies
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
 
@@ -498,8 +498,13 @@ def shipping():
     if not phone:
         return redirect(url_for('login'))  # If no phone in session, redirect to login
 
+    # ✅ Fetch the user details using the phone from session
+    user = users.find_one({'phone': phone})
+
     # Fetch the cart data for the user using the actual phone number
     cart = get_cart_by_phone(phone)
+
+
 
     if not cart:
         return redirect(url_for('products_page', phone=phone))  # If the cart is empty, go back to the products page
@@ -513,16 +518,19 @@ def shipping():
     if request.method == 'POST':
         # Get the shipping details from the form
         name = request.form['name']
+        user_name = user['fullname'] if user else 'Unknown'  # Default to 'Unknown' if not found
         phno = request.form['phno']
-        shipping_phone = request.form['phone']  # This is the phone number for delivery
+        user_phone = request.form['phone']  # This is the phone number for delivery
         address = request.form['address']
         payment_method = request.form['payment_method']
 
         # Store the user's details in the session
         session['shipping_details'] = {
+            'user_name':user_name,
+            'user_phone':user_phone,
+
             'name': name,
             'phno':phno,
-            'phone': shipping_phone,  # Store the delivery phone number
             'address': address,
             'payment_method': payment_method,
             'total_price': total_price
@@ -585,7 +593,8 @@ def verify_cod():
 
         # Construct order data
         order_data = {
-            'phone': phone,
+            'user_phone': phone,
+            'user_name':shipping_details['user_name'],
 
             'name': shipping_details['name'],
             'phno': shipping_details['phno'],
