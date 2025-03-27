@@ -15,8 +15,9 @@
         <p>Your order has been placed successfully. Here are the details:</p>
 
         <p><strong>Name:</strong> {{ order_data['name'] }}</p>
+        <p><strong>Phone:</strong> {{ order_data['user_phone'] }}</p>
+
         <p><strong>Delhivery_Ph:</strong> {{ order_data['phno'] }}</p>
-        <p><strong>Phone:</strong> {{ order_data['phone'] }}</p>
         <p><strong>Address:</strong> {{ order_data['address'] }}</p>
         <p><strong>Payment Method:</strong> {{ order_data['payment_method'] }}</p>
         <p><strong>Total Price:</strong> ${{ order_data['total_price'] }}</p>
